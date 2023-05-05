@@ -1,6 +1,6 @@
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
-from .models import UserModel
+from .models import BlogUser, BlogPost, Comment
 
 from django.shortcuts import render
 
@@ -12,7 +12,7 @@ def index(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
-        user_exists = UserModel.objects.filter(username=username).exists()
+        user_exists = BlogUser.objects.filter(username=username).exists()
 
         if user_exists:
             user = authenticate(username=username, password=password)
@@ -22,7 +22,7 @@ def index(request):
             else:
                 error_msg = 'Invalid password'
         else:
-            UserModel.objects.create_user(username=username, password=password)
+            BlogUser.objects.create_user(username=username, password=password)
             user = authenticate(username=username, password=password)
             login(request, user)
             return redirect('home')
