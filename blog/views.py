@@ -80,14 +80,11 @@ def create_blog_post(request):
             post = form.save(commit=False)
             post.author = request.user
             post.save()
-            return redirect('blog:post_detail', post_id=post.pk)
+            return redirect('blog:post_list')
     else:
         form = BlogPostForm()
     return render(request, 'blog/create_blog_post.html', {'form': form})
 
-def post_detail(request, post_id):
-    post = BlogPost.objects.get(pk=post_id)
-    return render(request, 'blog/post_detail.html', {'post': post})
 
 def delete_blog_post(request, post_id):
     post = BlogPost.objects.get(pk=post_id)
