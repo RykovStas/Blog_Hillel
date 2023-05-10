@@ -27,7 +27,7 @@ HTML/ CSS
 - [x] You can change your bio or avatar in your profile
 ![img_2.png](static/img_2.png)
 
-- [x] Example of Post where users can commnet or add posts
+- [x] Example of Post where users can comment or add posts
 ![img_3.png](static/img_3.png)
 
 
