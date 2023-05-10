@@ -23,6 +23,7 @@
                   {% if post.author == request.user %}
             <a href="{% url 'blog:delete_blog_post' post_id=post.pk %}" class="btn btn-danger">Delete</a>
           {% endif %}
+            <a href="{% url 'blog:post_detail' post_id=post.pk %}" class="btn btn-primary">Details</a>
             </div>
           </div>
         </div>

@@ -28,9 +28,11 @@ class BlogPost(models.Model):
 
 
 class Comment(models.Model):
-    blogpost = models.ForeignKey(BlogPost, on_delete=models.CASCADE)
+    blogpost = models.ForeignKey(BlogPost, on_delete=models.CASCADE, related_name='comments')
     username = models.CharField(max_length=50)
     text = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
-    is_published = models.BooleanField(default=False)
+    is_published = models.BooleanField(default=True)
 
+    def __str__(self):
+        return f'Comment on "{self.blogpost.title}"'

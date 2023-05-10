@@ -1,18 +1,16 @@
 from django.core.paginator import Paginator
 from django.shortcuts import redirect
-from .models import BlogPost, BlogUser
+from .models import BlogPost, BlogUser, Comment
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from .forms import BlogPostForm, CreateUserForm
 from django.db.models import Prefetch
-from django.shortcuts import render
-from django.utils import timezone
+from django.shortcuts import render, get_object_or_404
 from django.contrib import messages
 
 
 def registerPage(request):
     form = CreateUserForm()
-
     if request.method == 'POST':
         form = CreateUserForm(request.POST)
         if form.is_valid():
@@ -26,7 +24,6 @@ def registerPage(request):
 
 
 def loginPage(request):
-
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -59,8 +56,11 @@ def profile(request):
         return redirect('blog:home')
     return render(request, 'blog/profile.html', {'user': user})
 
+
 def home(request):
-    return render(request, 'blog/home.html')
+    users = BlogUser.objects.all()
+    contex = {'users': users}
+    return render(request, 'blog/home.html', contex)
 
 
 def post_list(request):
@@ -92,4 +92,25 @@ def delete_blog_post(request, post_id):
     return redirect('blog:post_list')
 
 
+def post_detail(request, post_id):
+    post = get_object_or_404(BlogPost, pk=post_id, is_published=True)
+    comments = post.comments.filter(is_published=True)
+    context = {
+        'post': post,
+        'comments': comments
+    }
+    return render(request, 'blog/detail.html', context)
 
+
+def add_comment(request, post_id):
+    post = BlogPost.objects.get(pk=post_id)
+
+    if request.method == 'POST':
+        text = request.POST['text']
+
+        comment = Comment(blogpost=post, text=text)
+        comment.save()
+
+        return redirect('blog:post_detail', post_id=post_id)
+
+    return redirect('blog:post_detail', post_id=post_id)
