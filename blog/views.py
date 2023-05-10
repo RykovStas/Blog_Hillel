@@ -56,7 +56,7 @@ def profile(request):
         if avatar:
             user.avatar = avatar
         user.save()
-        return redirect('blog:profile')
+        return redirect('blog:home')
     return render(request, 'blog/profile.html', {'user': user})
 
 def home(request):
