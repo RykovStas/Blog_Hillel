@@ -14,22 +14,6 @@ class CreateUserForm(UserCreationForm):
 
 
 class BlogPostForm(forms.ModelForm):
-    body = forms.CharField(
-        required=True,
-        widget=forms.widgets.Textarea(
-            attrs={
-                "placeholder": "Dweet something...",
-                "class": "textarea is-success is-medium",
-            }
-        ),
-        label="",
-    )
-
     class Meta:
         model = BlogPost
-        fields = ['title', 'text', 'is_published']
-        widgets = {
-            'title': forms.TextInput(attrs={'class': 'form-control'}),
-            'text': forms.Textarea(attrs={'class': 'form-control'}),
-            'is_published': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-        }
+        fields = ['title', 'text', 'image']

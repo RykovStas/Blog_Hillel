@@ -19,11 +19,12 @@ class BlogPost(models.Model):
     title = models.CharField(max_length=255)
     text = models.TextField(blank=True)
     author = models.ForeignKey(BlogUser, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='images')
     created_at = models.DateTimeField(auto_now_add=True)
-    is_published = models.BooleanField(default=False)
+    is_published = models.BooleanField(default=True)
 
     def __str__(self):
-        return f'{str(self.title)}. Author: {str(self.author)}'
+        return f'{str(self.title)}. Author: {str(self.author)}. Image: {str(self.image.url)}'
 
 
 class Comment(models.Model):

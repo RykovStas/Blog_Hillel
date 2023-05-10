@@ -73,18 +73,26 @@ def post_list(request):
 
 
 @login_required(login_url='blog:login')
-def create_post(request):
+def create_blog_post(request):
     if request.method == 'POST':
-        form = BlogPostForm(request.POST)
+        form = BlogPostForm(request.POST, request.FILES)
         if form.is_valid():
             post = form.save(commit=False)
-            post.author = request.user.get_username
-            post.created_at = timezone.now()
+            post.author = request.user
             post.save()
-            return redirect('post_list')
+            return redirect('blog:post_detail', post_id=post.pk)
     else:
         form = BlogPostForm()
-    return render(request, 'blog/create_post.html', {'form': form})
+    return render(request, 'blog/create_blog_post.html', {'form': form})
+
+def post_detail(request, post_id):
+    post = BlogPost.objects.get(pk=post_id)
+    return render(request, 'blog/post_detail.html', {'post': post})
+
+def delete_blog_post(request, post_id):
+    post = BlogPost.objects.get(pk=post_id)
+    post.delete()
+    return redirect('blog:post_list')
 
 
 
