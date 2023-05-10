@@ -1,12 +1,17 @@
+from django.conf import settings
 from django.core.paginator import Paginator
 from django.shortcuts import redirect
-from .models import BlogPost, BlogUser, Comment
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from .forms import BlogPostForm, CreateUserForm
 from django.db.models import Prefetch
+from django.http import JsonResponse
+from django.template.loader import render_to_string
 from django.shortcuts import render, get_object_or_404
 from django.contrib import messages
+
+from .models import BlogPost, BlogUser, Comment
+from .forms import BlogPostForm, CreateUserForm, ContactUsForm
+from .tasks import send_mail as celery_send_mail
 
 
 def registerPage(request):
@@ -114,3 +119,24 @@ def add_comment(request, post_id):
         return redirect('blog:post_detail', post_id=post_id)
 
     return redirect('blog:post_detail', post_id=post_id)
+
+
+def contact_us(request):
+    data = dict()
+    if request.method == 'POST':
+        form = ContactUsForm(request.POST)
+        if form.is_valid():
+            data['form_is_valid'] = True
+            customer_name = form.cleaned_data['name']
+            customer_email = form.cleaned_data['email']
+            subj = form.cleaned_data['subject']
+            mes = form.cleaned_data['text']
+            subject = 'New user application!'
+            message = f'Name: {customer_name}\nEmail: {customer_email}\nSubject: {subj}\nMessage: {mes}'
+            celery_send_mail.apply_async((subject, message, settings.NOREPLY_EMAIL, (settings.CONTACT_EMAIL, )))
+        else:
+            data['form_is_valid'] = False
+    else:
+        form = ContactUsForm()
+    data['html_form'] = render_to_string('blog/contact_us.html', {'form': form}, request=request)
+    return JsonResponse(data)
