@@ -27,10 +27,9 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <div class="navbar-nav">
-        <a class="nav-link active" aria-current="page" href="">Home</a>
+        <a class="nav-link active" aria-current="page" href="{% url 'blog:profile' %}">My Profile</a>
         <a class="nav-link" href="{% url 'blog:post_list' %}">Posts</a>
-        <a class="nav-link" href="#">Users</a>
-          <a class="nav-link" href="{% url 'blog:logout' %}">Logout</a>
+        <a class="nav-link" href="{% url 'blog:logout' %}">Logout</a>
         <a class="nav-link disabled">Complete by Stas Rykov / 05.05.2023</a>
       </div>
     </div>

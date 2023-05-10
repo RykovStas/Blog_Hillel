@@ -1,13 +1,30 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
-from .models import BlogPost
+from .models import BlogPost, BlogUser
+
+class UserProfile(forms.ModelForm):
+    class Meta:
+        model = BlogUser
+        fields = ['username', 'email', 'avatar']
 
 class CreateUserForm(UserCreationForm):
     class Meta:
-        model = User
+        model = BlogUser
         fields = ['username', 'email', 'password1', 'password2']
+
+
 class BlogPostForm(forms.ModelForm):
+    body = forms.CharField(
+        required=True,
+        widget=forms.widgets.Textarea(
+            attrs={
+                "placeholder": "Dweet something...",
+                "class": "textarea is-success is-medium",
+            }
+        ),
+        label="",
+    )
+
     class Meta:
         model = BlogPost
         fields = ['title', 'text', 'is_published']

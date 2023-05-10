@@ -1,6 +1,6 @@
 from django.core.paginator import Paginator
 from django.shortcuts import redirect
-from .models import BlogPost, User
+from .models import BlogPost, BlogUser
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from .forms import BlogPostForm, CreateUserForm
@@ -47,14 +47,24 @@ def logoutUser(request):
     return redirect('blog:login')
 
 
+@login_required(login_url='blog:login')
+def profile(request):
+    user = request.user
+    if request.method == 'POST':
+        user.bio = request.POST.get('bio')
+        avatar = request.FILES.get('avatar')
+        if avatar:
+            user.avatar = avatar
+        user.save()
+        return redirect('blog:profile')
+    return render(request, 'blog/profile.html', {'user': user})
 
 def home(request):
     return render(request, 'blog/home.html')
 
 
 def post_list(request):
-    posts = BlogPost.objects.filter(is_published=True).prefetch_related(Prefetch('author', queryset=User.objects.only('username')))
-
+    posts = BlogPost.objects.filter(is_published=True).prefetch_related(Prefetch('author', queryset=BlogUser.objects.only('username')))
     paginator = Paginator(posts, 5)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
@@ -75,3 +85,6 @@ def create_post(request):
     else:
         form = BlogPostForm()
     return render(request, 'blog/create_post.html', {'form': form})
+
+
+
